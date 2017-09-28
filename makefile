@@ -11,5 +11,5 @@ clean:
 	rm -f $(PROJECT)
 
 install: $(PROJECT)
-	echo "bla" 
+	echo "Todo..." 
 .PHONY: install 

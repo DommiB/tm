@@ -1,13 +1,13 @@
 /*vim: set ts=8 sw=4 tw=0 noet :
  *@file     expiretimer.cpp
  *@brief    simple countdown timer, which shows a notification after a given
- *time
+ *          time
  *@author   bdk
- *@version  0.1
+ *@version  0.2
  *
  * version --  change -- author
- * 0.1 -- add first implentation, basic functions -- bdk
- *
+ * 0.1 -- add first implentation, basic functions   -- bdk
+ * 0.2 -- add verbose flag (-d) i                   -- bdk
  */
 
 #include <stdio.h>
@@ -22,7 +22,7 @@
 int main(int argc, char **argv)
 {
     try {
-        TCLAP::CmdLine cmd("Popup timer", ' ', "0.1");
+        TCLAP::CmdLine cmd("Popup timer", ' ', "0.2");
         TCLAP::ValueArg<std::string> msgArg(
             "m", "msg", "Message to display in the notification", false,
             "Default message", "string");
@@ -32,7 +32,12 @@ int main(int argc, char **argv)
             "time", "expire time in minutes", true, 12, "int");
         cmd.add(expiretime);
 
+        TCLAP::SwitchArg verboseFlag("d", "debug",
+                                     "Enable verbose/debug output", cmd, false);
+
         cmd.parse(argc, argv);
+
+        bool verbose = verboseFlag.getValue();
 
         pid_t pid = fork();
 
@@ -49,6 +54,11 @@ int main(int argc, char **argv)
             return EXIT_SUCCESS;
         }
         else if (pid > 0) {  // parent
+            if (verbose) {
+                std::cout << argv[0] << ": Starting Timer " << msgArg.getValue()
+                          << " with " << expiretime.getValue() << " min"
+                          << std::endl;
+            }
             return EXIT_SUCCESS;
         }
         else {
